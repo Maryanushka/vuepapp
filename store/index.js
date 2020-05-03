@@ -1,30 +1,37 @@
 export const state = () => ({
 	news: [],
 	// loading: false,
-	category: ''
+	category: '',
+	country: 'us',
+	// url: `/api/top-headlines?country=${country}&category=${category}`
 })
 
 export const mutations =  {
 	setNews(state, news){
 		state.news = news;
 	},
-	// setLoading(state, loading) {
-	// 	state.loading = loading;
-	// },
 	setCategory(state, category) {
 		state.category = category;
+	},
+	setCountry(state, country) {
+		state.country = country;
 	},
 }
 export const actions = {
 	async loadNews({ commit }, url) {
-		// commit('setLoading', true);
 		const { articles } = await this.$axios.$get(url);
-		// commit('setLoading', false);
 		commit('setNews', articles);
+		
 	},
+	setCategory({ commit , dispatch }, category){
+		commit('setCategory', category);
+	},
+	setCountry({ commit , dispatch }, country){
+		commit('setCountry', country);
+	}
 }
 export const getters =  {
 	news: state => state.news,
-	// loading: state => state.loading,
-	category: state => state.category
+	category: state => state.category,
+	country: state => state.country
 }

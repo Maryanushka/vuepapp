@@ -2,7 +2,7 @@
     <div class="md-layout md-alignment-center">
 			    <!-- Top Navigation -->
 					<md-toolbar class="fixed-toolbar" elevation="1">
-						<md-button class="md-icon-button md-accent">
+						<md-button class="md-icon-button md-accent" @click="showRightSidepanel = true">
 							<md-icon>menu</md-icon>
 						</md-button>
 						<nuxt-link class="md-primary md-title" to="/">
@@ -12,26 +12,37 @@
 						<div class="md-toolbar-section-end">
 							<md-button class="md-accent" to="/login">Login</md-button>
 							<md-button class="md-accent" to="/register">Register</md-button>
-							<md-button class="md-accent" @click="showSidepanel = true">Categories</md-button>
+							<md-button class="md-accent" @click="showLeftSidepanel = true">Categories</md-button>
 						</div>
 					</md-toolbar>
 
-					<!-- News Categories (Right Drawer) -->
-					<md-drawer class="md-right" md-fixed :md-active.sync="showSidepanel">
+					<!-- News Categories (Left Drawer) -->
+					<md-drawer class="md-right" md-fixed :md-active.sync="showLeftSidepanel">
 						<md-toolbar :md-elevation="1">
 							<span class="md-title">News Categories</span>
 						</md-toolbar>
-
-						<!-- <md-progress-bar v-if="loading" md-mode='indeterminate'></md-progress-bar> -->
-
+						<md-subheader class="md-primary">Categories</md-subheader>
 						<md-list>
-							<md-subheader class="md-primary">Categories</md-subheader>
-
 							<md-list-item v-for="(newsCategory, i) in newsCategories" :key="i" @click="loadCategory(newsCategory.path)">
 								<md-icon :class="newsCategory.path === category ? 'md-primary' : ''">{{newsCategory.icon}}</md-icon>
 								<span class="md-list-item-text">{{newsCategory.name}}</span>
 							</md-list-item>
 						</md-list>
+					</md-drawer>
+
+					<!-- Country filter (Right Drawer) -->
+					<md-drawer class="md-left" md-fixed :md-active.sync="showRightSidepanel">
+						<md-toolbar :md-elevation="1">
+							<span class="md-title">Country</span>
+						</md-toolbar>
+						<md-subheader class="md-primary">Country</md-subheader>
+
+						 <md-field>
+							<label for="country">Country</label>
+							<md-select name="country" id="movie" @input="changeCountry">
+								<md-option v-for="(c, i ) in countries" :key="i" :value="c.value">{{ c.name }}</md-option>
+							</md-select>
+						</md-field>
 					</md-drawer>
 
         <!-- App Content -->
@@ -110,7 +121,8 @@
 <script>
 export default {
 	data: () => ({
-    showSidepanel: false,
+    showLeftSidepanel: false,
+    showRightSidepanel: false,
     newsCategories: [
       { name: 'Top Headlines', path: '', icon: 'today' },
       { name: 'Technology', path: 'technology', icon: 'keyboard' },
@@ -119,10 +131,15 @@ export default {
       { name: 'Health', path: 'health', icon: 'fastfood' },
       { name: 'Science', path: 'science', icon: 'fingerprint' },
       { name: 'Sports', path: 'sports', icon: 'golf_course' }
-    ]
+		],
+		countries: [
+			{name: 'Unated States', value: 'us'},
+			{name: 'Canada', value: 'ca'},
+			{name: 'Russia', value: 'ru'},
+		]
   }),
   async fetch({ store }) {
-      await store.dispatch("loadNews", '/api/top-headlines?country=us');
+      await store.dispatch("loadNews", `/api/top-headlines?country=${store.state.country}&category=${store.state.category}`);
 	},
 	computed: {
 		news(){
@@ -131,14 +148,18 @@ export default {
 		category() {
       return this.$store.getters.category;
     },
-    // loading() {
-    //   return this.$store.getters.loading;
-    // }
+		country() {
+      return this.$store.getters.country;
+    },
 	},
 	methods: {
     async loadCategory(category) {
-      this.$store.commit('setCategory', category);
-      await this.$store.dispatch('loadNews', `/api/top-headlines?country=us&category=${this.category}`)
+			this.$store.dispatch('setCategory', category);
+			await this.$store.dispatch("loadNews", `/api/top-headlines?country=${this.country}&category=${this.category}`);
+    },
+    async changeCountry(country) {
+			this.$store.dispatch('setCountry', country);
+			await this.$store.dispatch("loadNews", `/api/top-headlines?country=${this.country}&category=${this.category}`);
     }
   }
 }
