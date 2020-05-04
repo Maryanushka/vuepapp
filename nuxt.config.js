@@ -53,12 +53,17 @@ export default {
   */
   axios: {
 		credentials: true,
-		proxy: true
+		proxy: true,
 	},
 	proxy: {
 		"/api/": {
 			target: 'https://newsapi.org/v2/',
 			pathRewrite: { '^/api/': ''}
+		},
+		"/register/": {
+			target: 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAwvami0C3twhqrhaBQP0D9PhR85Xf5FTA',
+			pathRewrite: { '^/register/': ''},
+			
 		}
 	},
 	env: {
