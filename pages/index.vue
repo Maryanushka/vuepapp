@@ -10,8 +10,18 @@
 						</nuxt-link>
 
 						<div class="md-toolbar-section-end">
-							<md-button class="md-accent" to="/login">Login</md-button>
-							<md-button class="md-accent" to="/register">Register</md-button>
+							 <template v-if="isAuthenticated">
+								<md-button>
+									<md-avatar><img :src="user.avatar" :alt="user.email"></md-avatar>
+										{{user.email}}
+								</md-button>
+								<md-button>Logout</md-button>
+							</template>
+
+							<template v-else>
+								<md-button to="/login">Login</md-button>
+								<md-button to="/register">Register</md-button>
+							</template>
 							<md-button class="md-accent" @click="showLeftSidepanel = true">Categories</md-button>
 						</div>
 					</md-toolbar>
@@ -150,7 +160,13 @@ export default {
     },
 		country() {
       return this.$store.getters.country;
+		},
+		user() {
+      return this.$store.getters.user;
     },
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    }
 	},
 	methods: {
     async loadCategory(category) {

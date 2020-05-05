@@ -33,6 +33,7 @@ export default {
   plugins: [
 		{ src: 'plugins/vue-mterial'},
 		{ src: 'plugins/axios'},
+		{ src: 'plugins/firestore'},
   ],
   /*
   ** Nuxt.js dev-modules
@@ -63,7 +64,11 @@ export default {
 		"/register/": {
 			target: 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAwvami0C3twhqrhaBQP0D9PhR85Xf5FTA',
 			pathRewrite: { '^/register/': ''},
-			
+		},
+		"/login/": {
+			target:
+				"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAwvami0C3twhqrhaBQP0D9PhR85Xf5FTA",
+			pathRewrite: { "^/login/": "" }
 		}
 	},
 	env: {
